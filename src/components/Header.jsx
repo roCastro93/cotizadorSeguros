@@ -7,10 +7,17 @@ const ContenedorHeader = styled.header`
   font-weight: bold;
   color: #ffffff;
 `;
+const TextoHeader = styled.h1`
+    font-size: 2rem ;
+    margin: 0;
+    font-family: 'Slabo 27px', serif;
+    text-align: center;
+
+`;
 const Header = ({ titulo }) => {
   return (
     <ContenedorHeader>
-      <h1>{titulo}</h1>
+      <TextoHeader>{titulo}</TextoHeader>
     </ContenedorHeader>
   );
 };
