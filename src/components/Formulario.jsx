@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
-
+import { obtenerDifYear, calcularMarca, calcularPlan } from "../helper";
 const Campo = styled.div`
   display: flex;
   margin-bottom: 1rem;
@@ -37,15 +37,15 @@ const Boton = styled.button`
   }
 `;
 
-const Error =styled.div`
-    background-color: red;
-    color: white;
-    padding: 1rem;
-    width: 100%;
-    text-align:center;
-    margin-bottom: 2rem;
+const Error = styled.div`
+  background-color: red;
+  color: white;
+  padding: 1rem;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2rem;
 `;
-const Formulario = () => {
+const Formulario = ({setResumen}) => {
   const [datos, setDatos] = useState({
     marca: "",
     year: "",
@@ -66,18 +66,41 @@ const Formulario = () => {
     e.preventDefault();
 
     if (marca.trim() === "" || year.trim() === "" || plan.trim() === "") {
-      setTimeout(function(){
-      setError(true)
-      },3000)
+      setError(true);
+      setTimeout(function () {
+        setError(false);
+      }, 3000);
       return;
-      
     }
     setError(false);
+
+    //una base de 2000
+    let resultado = 2000;
+
+    //obtener diferencia por año en cada año hay que restar 3%
+    const diferencia = obtenerDifYear(year);
+    resultado -= (diferencia * 3 * resultado) / 100;
+
+    //americano 15%
+    //asiatico 3%
+    //europeo 30%
+    resultado = parseFloat(calcularMarca(marca) * resultado);
+
+    //plan basico 20%
+    //completo 50%
+    const incrementoPlan = calcularPlan(plan);
+    resultado = parseFloat(incrementoPlan * resultado).toFixed(2);
+    
+    //total
+    setResumen({
+      cotizacion: resultado,
+      datos: datos
+    })
   };
 
   return (
     <form onSubmit={onSubmit}>
-      {error ?<Error>Todos los campos son obligatorios</Error> : null}
+      {error ? <Error>Todos los campos son obligatorios</Error> : null}
       <Campo>
         <Label>Marca</Label>
         <Select name="marca" value={marca} onChange={onChange}>
